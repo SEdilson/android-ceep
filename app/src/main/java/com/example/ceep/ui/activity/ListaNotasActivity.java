@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.ceep.R;
 import com.example.ceep.dao.NotaDAO;
 import com.example.ceep.model.Nota;
-import com.example.ceep.recycler.adapter.ListaNotasAdapter;
+import com.example.ceep.ui.recycler.adapter.ListaNotasAdapter;
+import com.example.ceep.ui.recycler.adapter.listener.OnItemClickListener;
 
 import java.util.List;
 
@@ -46,6 +48,15 @@ public class ListaNotasActivity extends AppCompatActivity {
             Nota notaRetornada = (Nota) data.getSerializableExtra(RESULTADO_NOTA_CRIADA);
             dao.insere(notaRetornada);
             adapter.adiciona(notaRetornada);
+        }
+
+        if(requestCode == 2 &&
+                resultCode == CODIGO_RESULTADO_INSERE_NOTA &&
+                temNota(data)) {
+            Nota notaRetornada = (Nota) data.getSerializableExtra(RESULTADO_NOTA_CRIADA);
+            int posicaoRecebida = data.getIntExtra("posicao", -1);
+            dao.altera(posicaoRecebida, notaRetornada);
+            adapter.altera(posicaoRecebida, notaRetornada);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -90,5 +101,15 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configuraAdapter(List<Nota> notas, RecyclerView listaDeNotas) {
         adapter = new ListaNotasAdapter(this, notas);
         listaDeNotas.setAdapter(adapter);
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(Nota nota, int posicao) {
+                Intent inicializaFormDeAtualizacao = new Intent(ListaNotasActivity.this,
+                        FormularioNotaActivity.class);
+                inicializaFormDeAtualizacao.putExtra(RESULTADO_NOTA_CRIADA, nota);
+                inicializaFormDeAtualizacao.putExtra("posicao", posicao);
+                startActivityForResult(inicializaFormDeAtualizacao, 2);
+            }
+        });
     }
 }
