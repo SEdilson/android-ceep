@@ -13,6 +13,7 @@ import com.example.ceep.R;
 import com.example.ceep.model.Nota;
 import com.example.ceep.ui.recycler.adapter.listener.OnItemClickListener;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.ListaNotasHolder> {
@@ -57,6 +58,16 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public void remove(int posicao) {
+        notas.remove(posicao);
+        notifyItemRemoved(posicao);
+    }
+
+    public void troca(int posicaoInicial, int posicaoFinal) {
+        Collections.swap(notas, posicaoInicial, posicaoFinal);
+        notifyItemMoved(posicaoInicial, posicaoFinal);
     }
 
     public class ListaNotasHolder extends RecyclerView.ViewHolder {

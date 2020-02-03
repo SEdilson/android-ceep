@@ -2,7 +2,9 @@ package com.example.ceep.ui.activity;
 
 public interface Codigos {
 
-    String RESULTADO_NOTA_CRIADA = "nota";
+    String CHAVE_NOTA = "nota";
+    String CHAVE_POSICAO = "posicao";
+    int POSICAO_INVALIDA = -1;
     int CODIGO_REQUISICAO_INSERE_NOTA = 1;
-    int CODIGO_RESULTADO_INSERE_NOTA = 2;
+    int CODIGO_REQUISICAO_ALTERA_NOTA = 2;
 }
