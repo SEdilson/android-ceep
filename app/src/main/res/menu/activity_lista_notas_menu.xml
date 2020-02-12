@@ -7,4 +7,10 @@
         android:icon="@drawable/ic_action_change_layout_linear"
         android:title="@string/LinearLayout"
         />
+
+    <item
+        android:id="@+id/activity_lista_notas_opcao_staggered_layout"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_action_change_layout_staggered"
+        android:title="@string/StaggeredLayout"/>
 </menu>

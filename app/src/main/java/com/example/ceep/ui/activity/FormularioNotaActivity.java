@@ -5,17 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ceep.R;
 import com.example.ceep.model.Nota;
 
-import static com.example.ceep.ui.activity.Codigos.CHAVE_NOTA;
-import static com.example.ceep.ui.activity.Codigos.CHAVE_POSICAO;
-import static com.example.ceep.ui.activity.Codigos.POSICAO_INVALIDA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_POSICAO;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.POSICAO_INVALIDA;
 
 
 public class FormularioNotaActivity extends AppCompatActivity {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -26,25 +27,21 @@ import com.example.ceep.ui.recycler.helper.callback.NotaItemTouchHelperCallback;
 
 import java.util.List;
 
-import static com.example.ceep.ui.activity.Codigos.CHAVE_NOTA;
-import static com.example.ceep.ui.activity.Codigos.CHAVE_POSICAO;
-import static com.example.ceep.ui.activity.Codigos.CODIGO_REQUISICAO_ALTERA_NOTA;
-import static com.example.ceep.ui.activity.Codigos.CODIGO_REQUISICAO_INSERE_NOTA;
-import static com.example.ceep.ui.activity.Codigos.POSICAO_INVALIDA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_POSICAO;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CODIGO_REQUISICAO_ALTERA_NOTA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CODIGO_REQUISICAO_INSERE_NOTA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.LAYOUT_APLICADO;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.LAYOUT_PREFERENCES_CHAVE;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.LINEAR_LAYOUT;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.POSICAO_INVALIDA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.STAGGERED_LAYOUT;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.TITULO_NOTAS_APPBAR;
 
 public class ListaNotasActivity extends AppCompatActivity {
 
-    public static final String TITULO_NOTAS_APPBAR = "Notas";
-    private static final String LAYOUT_APLICADO = "layout_manager";
-    private static final String LINEAR_LAYOUT = "linear_layout";
-    private static final String STAGGERED_LAYOUT = "staggered_layout";
-    public static final String LAYOUT_PREFERENCES_CHAVE = "layout_preferences";
-    private NotaDAO dao = new NotaDAO();
     private ListaNotasAdapter adapter;
-    private List<Nota> notas;
     private SharedPreferences layoutPreferences;
-    private SharedPreferences.Editor editor;
-    private RecyclerView viewListaNotas;
     private String layoutDoRecyclerView;
 
     @Override
@@ -53,45 +50,59 @@ public class ListaNotasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_notas);
 
         setTitle(TITULO_NOTAS_APPBAR);
+        List<Nota> notas = todasAsNotas();
 
         inicializaFormNota();
-        inicializaNotas();
         configuraListaDeNotas(notas);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.activity_lista_notas_staggered_layout, menu);
+        MenuInflater inflater = getMenuInflater();
 
-        return true;
+        inflater.inflate(R.menu.activity_lista_notas_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
         layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
         layoutDoRecyclerView = layoutPreferences.getString(LAYOUT_APLICADO, LINEAR_LAYOUT);
 
-        MenuItem itemMenuLinearLayout = menu.findItem(R.id.activity_lista_notas_opcao_linear_layout);
-        MenuItem itemMenuStaggeredLayout = menu.findItem(R.id.activity_lista_notas_opcao_staggered_layout);
+        MenuItem itemMenuLinearLayout =
+                menu.findItem(R.id.activity_lista_notas_opcao_linear_layout);
 
-        if(layoutDoRecyclerView == LINEAR_LAYOUT) {
-            itemMenuStaggeredLayout.setVisible(true);
-            itemMenuLinearLayout.setVisible(false);
+        MenuItem itemMenuStaggeredLayout =
+                menu.findItem(R.id.activity_lista_notas_opcao_staggered_layout);
+
+        configuraExibicaoOptionsMenu(itemMenuLinearLayout, itemMenuStaggeredLayout);
+
+        return true;
+    }
+
+    private void configuraExibicaoOptionsMenu(MenuItem itemMenuLinearLayout,
+                                              MenuItem itemMenuStaggeredLayout) {
+        boolean isVisible = true;
+
+        if(layoutDoRecyclerView.equals(LINEAR_LAYOUT)) {
+            itemMenuStaggeredLayout.setVisible(isVisible);
+            itemMenuLinearLayout.setVisible(!isVisible);
         }
-        if(layoutDoRecyclerView == STAGGERED_LAYOUT) {
-            itemMenuLinearLayout.setVisible(true);
-            itemMenuStaggeredLayout.setVisible(false);
+        if(layoutDoRecyclerView.equals(STAGGERED_LAYOUT)) {
+            itemMenuLinearLayout.setVisible(isVisible);
+            itemMenuStaggeredLayout.setVisible(!isVisible);
         }
-        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        SharedPreferences.Editor editor = layoutPreferences.edit();
+
         switch (item.getItemId()) {
             case R.id.activity_lista_notas_opcao_linear_layout:
                 layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
-                editor = layoutPreferences.edit();
                 editor.putString(LAYOUT_APLICADO, LINEAR_LAYOUT);
                 editor.apply();
 
@@ -99,7 +110,6 @@ public class ListaNotasActivity extends AppCompatActivity {
                 break;
 
             case R.id.activity_lista_notas_opcao_staggered_layout:
-                editor = layoutPreferences.edit();
                 editor.putString(LAYOUT_APLICADO, STAGGERED_LAYOUT);
                 editor.apply();
 
@@ -114,11 +124,11 @@ public class ListaNotasActivity extends AppCompatActivity {
         layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
         layoutDoRecyclerView = layoutPreferences.getString(LAYOUT_APLICADO, LINEAR_LAYOUT);
 
-        if(layoutDoRecyclerView == STAGGERED_LAYOUT) {
+        if(layoutDoRecyclerView.equals(STAGGERED_LAYOUT)) {
             configuraRecyclerViewLayoutManager(new StaggeredGridLayoutManager(2,
                     StaggeredGridLayoutManager.VERTICAL));
         }
-        if(layoutDoRecyclerView == LINEAR_LAYOUT) {
+        if(layoutDoRecyclerView.equals(LINEAR_LAYOUT)) {
             configuraRecyclerViewLayoutManager(new LinearLayoutManager(this));
         }
 
@@ -126,12 +136,8 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private void configuraRecyclerViewLayoutManager(RecyclerView.LayoutManager layoutManager) {
-        viewListaNotas = findViewById(R.id.activity_lista_notas_recyclerview);
+        RecyclerView viewListaNotas = findViewById(R.id.activity_lista_notas_recyclerview);
         viewListaNotas.setLayoutManager(layoutManager);
-    }
-
-    private void inicializaNotas() {
-        notas = dao.todos();
     }
 
     @Override
@@ -155,13 +161,18 @@ public class ListaNotasActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public List<Nota> todasAsNotas() {
+        NotaDAO dao = new NotaDAO();
+        return dao.todos();
+    }
+
     private void insere(Nota nota) {
-        dao.insere(nota);
+        new NotaDAO().insere(nota);
         adapter.adiciona(nota);
     }
 
     private void altera(Nota nota, int posicao) {
-        dao.altera(posicao, nota);
+        new NotaDAO().altera(posicao, nota);
         adapter.altera(posicao, nota);
     }
 

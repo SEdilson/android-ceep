@@ -3,4 +3,6 @@
     <string name="salvar_nota">Salvar Nota</string>
     <string name="StaggeredLayout">StaggeredLayoutManager</string>
     <string name="LinearLayout">LinearLayoutManager</string>
+    <string name="titulo_nota">Título</string>
+    <string name="descricao_nota">Descrição</string>
 </resources>
