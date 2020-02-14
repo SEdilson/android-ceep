@@ -43,6 +43,7 @@ public class ListaNotasActivity extends AppCompatActivity {
     private ListaNotasAdapter adapter;
     private SharedPreferences layoutPreferences;
     private String layoutDoRecyclerView;
+    private boolean isVisible = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,8 @@ public class ListaNotasActivity extends AppCompatActivity {
         layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
         layoutDoRecyclerView = layoutPreferences.getString(LAYOUT_APLICADO, LINEAR_LAYOUT);
 
+        menu.findItem(R.id.activity_lista_notas_feedback).setVisible(isVisible);
+
         MenuItem itemMenuLinearLayout =
                 menu.findItem(R.id.activity_lista_notas_opcao_linear_layout);
 
@@ -84,7 +87,6 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private void configuraExibicaoOptionsMenu(MenuItem itemMenuLinearLayout,
                                               MenuItem itemMenuStaggeredLayout) {
-        boolean isVisible = true;
 
         if(layoutDoRecyclerView.equals(LINEAR_LAYOUT)) {
             itemMenuStaggeredLayout.setVisible(isVisible);
@@ -115,6 +117,11 @@ public class ListaNotasActivity extends AppCompatActivity {
 
                 atribuiPreferencesAoLayout();
                 break;
+
+            case R.id.activity_lista_notas_feedback:
+                Intent intent = new Intent(this, FeedbackActivity.class);
+                startActivity(intent);
+                finish();
         }
 
         return super.onOptionsItemSelected(item);

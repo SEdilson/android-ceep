@@ -5,4 +5,11 @@
     <string name="LinearLayout">LinearLayoutManager</string>
     <string name="titulo_nota">Título</string>
     <string name="descricao_nota">Descrição</string>
+    <string name="deixe_o_seu_feedback">Deixe o seu feedback! :)</string>
+    <string name="descreva_seu_feedback">Descreva seu feedback</string>
+    <string name="e_mail">E-mail</string>
+    <string name="banner">banner</string>
+    <string name="sugestoes">Envie dúvidas ou sugestões sobre sua experiência com o Ceep. Usaremos as informações fornecidas para aprimorar a experiência da App.</string>
+    <string name="feedback">Feedback</string>
+    <string name="envia_feedback">Envia Feedback</string>
 </resources>

@@ -13,4 +13,10 @@
         app:showAsAction="always"
         android:icon="@drawable/ic_action_change_layout_staggered"
         android:title="@string/StaggeredLayout"/>
+
+    <item
+        android:id="@+id/activity_lista_notas_feedback"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_action_feedback"
+        android:title="@string/feedback"/>
 </menu>
