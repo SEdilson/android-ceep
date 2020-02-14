@@ -33,13 +33,13 @@ public class FeedbackActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if(itemId == R.id.activity_feedback_menu_envia) {
-            configuraListaDeNotas();
+            voltaPraListaDeNotas();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void configuraListaDeNotas() {
+    private void voltaPraListaDeNotas() {
         Intent intent = new Intent(this, ListaNotasActivity.class);
         startActivity(intent);
         finish();

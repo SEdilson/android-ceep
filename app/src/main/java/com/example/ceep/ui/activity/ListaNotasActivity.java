@@ -104,27 +104,32 @@ public class ListaNotasActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.activity_lista_notas_opcao_linear_layout:
-                layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
-                editor.putString(LAYOUT_APLICADO, LINEAR_LAYOUT);
-                editor.apply();
-
+                atribuiValorAPreference(editor, LINEAR_LAYOUT);
                 atribuiPreferencesAoLayout();
                 break;
 
             case R.id.activity_lista_notas_opcao_staggered_layout:
-                editor.putString(LAYOUT_APLICADO, STAGGERED_LAYOUT);
-                editor.apply();
-
+                atribuiValorAPreference(editor, STAGGERED_LAYOUT);
                 atribuiPreferencesAoLayout();
                 break;
 
             case R.id.activity_lista_notas_feedback:
-                Intent intent = new Intent(this, FeedbackActivity.class);
-                startActivity(intent);
-                finish();
+                configuraFormularioDeFeedback();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void configuraFormularioDeFeedback() {
+        Intent intent = new Intent(this, FeedbackActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void atribuiValorAPreference(SharedPreferences.Editor editor, String layout) {
+        layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
+        editor.putString(LAYOUT_APLICADO, layout);
+        editor.apply();
     }
 
     private void atribuiPreferencesAoLayout() {
