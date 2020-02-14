@@ -1,11 +1,17 @@
 package com.example.ceep.model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 
+@Entity
 public class Nota implements Serializable {
 
-    private final String titulo;
-    private final String descricao;
+    @PrimaryKey(autoGenerate = true)
+    private int id = 0;
+    private String titulo;
+    private String descricao;
 
     public Nota(String titulo, String descricao) {
         this.titulo = titulo;
@@ -20,4 +26,19 @@ public class Nota implements Serializable {
         return descricao;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 }
