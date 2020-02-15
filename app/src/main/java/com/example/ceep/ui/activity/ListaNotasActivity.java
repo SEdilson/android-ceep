@@ -22,7 +22,6 @@ import com.example.ceep.R;
 import com.example.ceep.dao.NotaDAO;
 import com.example.ceep.model.Nota;
 import com.example.ceep.ui.recycler.adapter.ListaNotasAdapter;
-import com.example.ceep.ui.recycler.adapter.listener.OnItemClickListener;
 import com.example.ceep.ui.recycler.helper.callback.NotaItemTouchHelperCallback;
 
 import java.util.List;
@@ -244,9 +243,9 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configuraAdapter(List<Nota> notas, RecyclerView listaDeNotas) {
         adapter = new ListaNotasAdapter(this, notas);
         listaDeNotas.setAdapter(adapter);
-        adapter.setOnItemClickListener(new OnItemClickListener() {
+        adapter.setOnItemClickListener(new ListaNotasAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(Nota nota, int posicao) {
+            public void OnItemClick(Nota nota, int posicao) {
                 vaiParaFormActivityAlteraNota(nota, posicao);
             }
         });

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.FormularioNotaActivity">
+    tools:context=".ui.activity.FormularioNotaActivity"
+    android:id="@+id/activity_form_nota_layout">
 
     <EditText
         android:id="@+id/activity_form_nota_titulo"
@@ -18,7 +19,8 @@
         android:textSize="30sp"
         android:textStyle="bold"
         android:layout_margin="20dp"
-        android:inputType="text" />
+        android:inputType="text"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/activity_form_nota_descricao"
@@ -34,6 +36,20 @@
         android:textSize="30sp"
         android:background="@android:color/transparent"
         android:layout_marginTop="8dp"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine"
+        android:importantForAutofill="no" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_form_cores"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#eeeeee"
+        android:orientation="horizontal"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/item_cor_nota"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

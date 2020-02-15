@@ -77,6 +77,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
+        android:id="@+id/activity_feedback_texto_sugestoes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/sugestoes"

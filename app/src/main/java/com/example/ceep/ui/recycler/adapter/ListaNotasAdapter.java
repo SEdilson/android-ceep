@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ceep.R;
 import com.example.ceep.model.Nota;
-import com.example.ceep.ui.recycler.adapter.listener.OnItemClickListener;
 
 import java.util.Collections;
 import java.util.List;
@@ -83,7 +82,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onItemClickListener.onItemClick(nota, getAdapterPosition());
+                    onItemClickListener.OnItemClick(nota, getAdapterPosition());
                 }
             });
         }
@@ -97,5 +96,9 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
             titulo.setText(nota.getTitulo());
             descricao.setText(nota.getDescricao());
         }
+    }
+
+    public interface OnItemClickListener {
+        void OnItemClick(Nota nota, int posicao);
     }
 }
