@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.FormularioNotaActivity"
-    android:id="@+id/activity_form_nota_layout">
+    android:id="@+id/activity_form_nota_layout"
+    android:background="@android:color/white">
 
     <EditText
         android:id="@+id/activity_form_nota_titulo"
@@ -41,7 +42,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_form_cores"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#eeeeee"
         android:orientation="horizontal"

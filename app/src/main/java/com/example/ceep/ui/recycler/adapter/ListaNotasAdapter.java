@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ceep.R;
@@ -73,12 +74,14 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
 
         private final TextView titulo;
         private final TextView descricao;
+        private final ConstraintLayout itemNotaLayout;
         private Nota nota;
 
         public ListaNotasHolder(@NonNull View itemView) {
             super(itemView);
             titulo = itemView.findViewById(R.id.item_nota_titulo);
             descricao = itemView.findViewById(R.id.item_nota_descricao);
+            itemNotaLayout = itemView.findViewById(R.id.item_nota_layout);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -95,6 +98,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
         private void preencheCampos(Nota nota) {
             titulo.setText(nota.getTitulo());
             descricao.setText(nota.getDescricao());
+            itemNotaLayout.setBackgroundColor(nota.getCor());
         }
     }
 

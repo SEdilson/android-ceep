@@ -9,10 +9,12 @@ public class Nota implements Serializable {
 //    private int id = 0;
     private String titulo;
     private String descricao;
+    private int cor;
 
-    public Nota(String titulo, String descricao) {
+    public Nota(String titulo, String descricao, int cor) {
         this.titulo = titulo;
         this.descricao = descricao;
+        this.cor = cor;
     }
 
     public Nota() {
@@ -25,6 +27,14 @@ public class Nota implements Serializable {
 
     public String getDescricao() {
         return descricao;
+    }
+
+    public int getCor() {
+        return cor;
+    }
+
+    public void setCor(int cor) {
+        this.cor = cor;
     }
 
 //    public int getId() {

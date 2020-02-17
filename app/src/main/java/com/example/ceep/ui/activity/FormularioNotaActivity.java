@@ -3,12 +3,11 @@ package com.example.ceep.ui.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,8 +34,8 @@ public class FormularioNotaActivity extends AppCompatActivity {
     private Nota nota;
     private EditText campoTitulo;
     private EditText campoDescricao;
-    private ConstraintLayout formNotaLayout = findViewById(R.id.activity_form_nota_layout);
     private List<Cores> cores = Arrays.asList(Cores.values());
+    private ConstraintLayout formNotaLayout;
 //    private RoomNotaDAO dao;
     private int posicaoRecebida = POSICAO_INVALIDA;
 
@@ -47,10 +46,25 @@ public class FormularioNotaActivity extends AppCompatActivity {
 
         setTitle(CRIA_NOTA_TITULO_APPBAR);
 
-        inicializaCampos();
+        inicializaNota();
         vinculaValores();
 
         configuraAdapterListaCoresNota();
+    }
+
+    private void vinculaValores() {
+        Intent dadosRecebidos = getIntent();
+        if(dadosRecebidos.hasExtra(CHAVE_NOTA)) {
+            setTitle(ALTERA_NOTA_TITULO_APPBAR);
+            nota = (Nota) dadosRecebidos.
+                    getSerializableExtra(CHAVE_NOTA);
+            posicaoRecebida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
+            campoTitulo.setText(nota.getTitulo());
+            campoDescricao.setText(nota.getDescricao());
+            formNotaLayout.setBackgroundColor(nota.getCor());
+        } else {
+            nota = new Nota();
+        }
     }
 
     private void configuraAdapterListaCoresNota() {
@@ -69,20 +83,7 @@ public class FormularioNotaActivity extends AppCompatActivity {
         String corRetornada = cores.get(posicao).getCor();
         int corParseada = Color.parseColor(corRetornada);
         formNotaLayout.setBackgroundColor(corParseada);
-    }
-
-    private void vinculaValores() {
-        Intent dadosRecebidos = getIntent();
-        if(dadosRecebidos.hasExtra(CHAVE_NOTA)) {
-            setTitle(ALTERA_NOTA_TITULO_APPBAR);
-            nota = (Nota) dadosRecebidos.
-                    getSerializableExtra(CHAVE_NOTA);
-            posicaoRecebida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
-            campoTitulo.setText(nota.getTitulo());
-            campoDescricao.setText(nota.getDescricao());
-        } else {
-            nota = new Nota();
-        }
+        nota.setCor(corParseada);
     }
 
     @Override
@@ -113,15 +114,22 @@ public class FormularioNotaActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, resultadoInsercao);
     }
 
-    private void inicializaCampos() {
+    private void inicializaNota() {
         campoTitulo = findViewById(R.id.activity_form_nota_titulo);
         campoDescricao = findViewById(R.id.activity_form_nota_descricao);
+        formNotaLayout = findViewById(R.id.activity_form_nota_layout);
     }
 
     private void preencheNota() {
         String titulo = campoTitulo.getText().toString();
         String descricao = campoDescricao.getText().toString();
+        int corNota = configuraPreenchimentoDaCor();
 
-        nota = new Nota(titulo, descricao);
+        nota = new Nota(titulo, descricao, corNota);
+    }
+
+    private int configuraPreenchimentoDaCor() {
+        ColorDrawable backgroundNota = (ColorDrawable) formNotaLayout.getBackground();
+        return backgroundNota.getColor();
     }
 }
