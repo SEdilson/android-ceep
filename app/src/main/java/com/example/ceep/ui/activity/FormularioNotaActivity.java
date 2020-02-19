@@ -24,7 +24,6 @@ import java.util.List;
 
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA;
 
-
 public class FormularioNotaActivity extends AppCompatActivity {
 
     public static final String CRIA_NOTA_TITULO_APPBAR = "Cria Nota";

@@ -43,7 +43,9 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-        removeNota(nota);
+        int notaPosicao = viewHolder.getAdapterPosition();
+        Nota notaRetornada = adapter.retornaNotaNaPosicao(notaPosicao);
+        removeNota(notaRetornada);
     }
 
     private void removeNota(Nota nota) {

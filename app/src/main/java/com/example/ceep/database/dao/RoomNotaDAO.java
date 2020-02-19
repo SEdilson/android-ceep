@@ -17,7 +17,7 @@ public interface RoomNotaDAO {
     @Insert
     long salva(Nota nota);
 
-    @Query("SELECT * FROM nota")
+    @Query("SELECT * FROM nota ORDER BY posicao DESC")
     List<Nota> todasNotas();
 
     @Query("SELECT * FROM Nota WHERE id = :id")

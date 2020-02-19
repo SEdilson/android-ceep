@@ -69,8 +69,13 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
 //    }
 
     public void remove(Nota nota) {
-        notas.remove(nota);
+        notas.remove(nota.getPosicao());
+        notifyItemRangeRemoved(0, this.notas.size());
         notifyItemRemoved(nota.getId());
+    }
+
+    public Nota retornaNotaNaPosicao(int posicao) {
+        return notas.get(posicao);
     }
 
     public void troca(int posicaoInicial, int posicaoFinal) {
@@ -107,6 +112,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
             titulo.setText(nota.getTitulo());
             descricao.setText(nota.getDescricao());
             itemNotaLayout.setBackgroundColor(nota.getCor());
+            nota.setPosicao(getAdapterPosition());
         }
     }
 
