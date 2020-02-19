@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA;
-import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_POSICAO;
-import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.POSICAO_INVALIDA;
 
 
 public class FormularioNotaActivity extends AppCompatActivity {
@@ -36,8 +34,6 @@ public class FormularioNotaActivity extends AppCompatActivity {
     private EditText campoDescricao;
     private List<Cores> cores = Arrays.asList(Cores.values());
     private ConstraintLayout formNotaLayout;
-//    private RoomNotaDAO dao;
-    private int posicaoRecebida = POSICAO_INVALIDA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +54,6 @@ public class FormularioNotaActivity extends AppCompatActivity {
             setTitle(ALTERA_NOTA_TITULO_APPBAR);
             nota = (Nota) dadosRecebidos.
                     getSerializableExtra(CHAVE_NOTA);
-            posicaoRecebida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
             campoTitulo.setText(nota.getTitulo());
             campoDescricao.setText(nota.getDescricao());
             formNotaLayout.setBackgroundColor(nota.getCor());
@@ -110,7 +105,6 @@ public class FormularioNotaActivity extends AppCompatActivity {
     private void resultadoInsercaoNota() {
         Intent resultadoInsercao = new Intent();
         resultadoInsercao.putExtra(CHAVE_NOTA, nota);
-        resultadoInsercao.putExtra(CHAVE_POSICAO, posicaoRecebida);
         setResult(Activity.RESULT_OK, resultadoInsercao);
     }
 

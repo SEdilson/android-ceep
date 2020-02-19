@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,21 +20,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.ceep.R;
-import com.example.ceep.dao.NotaDAO;
 import com.example.ceep.model.Nota;
+import com.example.ceep.repository.NotaRepository;
 import com.example.ceep.ui.recycler.adapter.ListaNotasAdapter;
 import com.example.ceep.ui.recycler.helper.callback.NotaItemTouchHelperCallback;
 
 import java.util.List;
 
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA;
-import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_POSICAO;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CODIGO_REQUISICAO_ALTERA_NOTA;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CODIGO_REQUISICAO_INSERE_NOTA;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.LAYOUT_APLICADO;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.LAYOUT_PADRAO;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.LAYOUT_PREFERENCES_CHAVE;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.LINEAR_LAYOUT;
-import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.POSICAO_INVALIDA;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.STAGGERED_LAYOUT;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.TITULO_NOTAS_APPBAR;
 
@@ -42,6 +42,8 @@ public class ListaNotasActivity extends AppCompatActivity {
     private ListaNotasAdapter adapter;
     private SharedPreferences layoutPreferences;
     private String layoutDoRecyclerView;
+    private RecyclerView listaDeNotas;
+    private NotaRepository repository;
     private boolean isVisible = true;
 
     @Override
@@ -50,10 +52,12 @@ public class ListaNotasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_notas);
 
         setTitle(TITULO_NOTAS_APPBAR);
-        List<Nota> notas = todasAsNotas();
+        layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
+        listaDeNotas = findViewById(R.id.activity_lista_notas_recyclerview);
+        repository = new NotaRepository(this);
 
         inicializaFormNota();
-        configuraListaDeNotas(notas);
+        configuraListaDeNotas();
     }
 
     @Override
@@ -68,8 +72,6 @@ public class ListaNotasActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
-        layoutDoRecyclerView = layoutPreferences.getString(LAYOUT_APLICADO, LINEAR_LAYOUT);
 
         menu.findItem(R.id.activity_lista_notas_feedback).setVisible(isVisible);
 
@@ -87,13 +89,14 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configuraExibicaoOptionsMenu(MenuItem itemMenuLinearLayout,
                                               MenuItem itemMenuStaggeredLayout) {
 
-        if(layoutDoRecyclerView.equals(LINEAR_LAYOUT)) {
-            itemMenuStaggeredLayout.setVisible(isVisible);
-            itemMenuLinearLayout.setVisible(!isVisible);
-        }
+        layoutDoRecyclerView = layoutPreferences.getString(LAYOUT_APLICADO, LAYOUT_PADRAO);
+
         if(layoutDoRecyclerView.equals(STAGGERED_LAYOUT)) {
             itemMenuLinearLayout.setVisible(isVisible);
             itemMenuStaggeredLayout.setVisible(!isVisible);
+        } else {
+            itemMenuStaggeredLayout.setVisible(isVisible);
+            itemMenuLinearLayout.setVisible(!isVisible);
         }
     }
 
@@ -126,29 +129,21 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private void atribuiValorAPreference(SharedPreferences.Editor editor, String layout) {
-        layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
         editor.putString(LAYOUT_APLICADO, layout);
         editor.apply();
     }
 
     private void atribuiPreferencesAoLayout() {
-        layoutPreferences = getSharedPreferences(LAYOUT_PREFERENCES_CHAVE, MODE_PRIVATE);
-        layoutDoRecyclerView = layoutPreferences.getString(LAYOUT_APLICADO, LINEAR_LAYOUT);
+        layoutDoRecyclerView = layoutPreferences.getString(LAYOUT_APLICADO, LAYOUT_PADRAO);
 
         if(layoutDoRecyclerView.equals(STAGGERED_LAYOUT)) {
-            configuraRecyclerViewLayoutManager(new StaggeredGridLayoutManager(2,
+            listaDeNotas.setLayoutManager(new StaggeredGridLayoutManager(2,
                     StaggeredGridLayoutManager.VERTICAL));
-        }
-        if(layoutDoRecyclerView.equals(LINEAR_LAYOUT)) {
-            configuraRecyclerViewLayoutManager(new LinearLayoutManager(this));
+        } else {
+            listaDeNotas.setLayoutManager(new LinearLayoutManager(this));
         }
 
         invalidateOptionsMenu();
-    }
-
-    private void configuraRecyclerViewLayoutManager(RecyclerView.LayoutManager layoutManager) {
-        RecyclerView viewListaNotas = findViewById(R.id.activity_lista_notas_recyclerview);
-        viewListaNotas.setLayoutManager(layoutManager);
     }
 
     @Override
@@ -156,35 +151,39 @@ public class ListaNotasActivity extends AppCompatActivity {
         if(ehResultadoInsereNota(requestCode, data)) {
             if(resultadoOK(resultCode)) {
                 Nota notaRetornada = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-                insere(notaRetornada);
+                repository.salvaNota(notaRetornada, new NotaRepository.DadosCarregadosCallback<Nota>() {
+                    @Override
+                    public void quandoSucesso(Nota resposta) {
+                        adapter.adiciona(resposta);
+                    }
+
+                    @Override
+                    public void quandoErro(String erro) {
+                        Toast.makeText(ListaNotasActivity.this,
+                                "Não foi possível salvar a nota", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
 
         if(ehResultadoAlteraNota(requestCode, data)) {
             if(resultadoOK(resultCode)) {
                 Nota notaRetornada = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-                int posicaoRecebida = data.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
-                if(posicaoRecebida > POSICAO_INVALIDA) {
-                    altera(notaRetornada, posicaoRecebida);
-                }
+                repository.atualizaNota(notaRetornada, new NotaRepository.DadosCarregadosCallback<Nota>() {
+                    @Override
+                    public void quandoSucesso(Nota resposta) {
+                        adapter.altera(resposta);
+                    }
+
+                    @Override
+                    public void quandoErro(String erro) {
+                        Toast.makeText(ListaNotasActivity.this,
+                                "Não foi possível alterar a nota", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public List<Nota> todasAsNotas() {
-        NotaDAO dao = new NotaDAO();
-        return dao.todos();
-    }
-
-    private void insere(Nota nota) {
-        new NotaDAO().insere(nota);
-        adapter.adiciona(nota);
-    }
-
-    private void altera(Nota nota, int posicao) {
-        new NotaDAO().altera(posicao, nota);
-        adapter.altera(posicao, nota);
     }
 
     private boolean ehResultadoAlteraNota(int requestCode, Intent data) {
@@ -228,34 +227,38 @@ public class ListaNotasActivity extends AppCompatActivity {
         startActivityForResult(resultadoEsperado, CODIGO_REQUISICAO_INSERE_NOTA);
     }
 
-    private void configuraListaDeNotas(List<Nota> notas) {
-        RecyclerView listaDeNotas = findViewById(R.id.activity_lista_notas_recyclerview);
-        configuraAdapter(notas, listaDeNotas);
+    private void configuraListaDeNotas() {
+        configuraAdapter(listaDeNotas);
         configuraItemTouchHelper(listaDeNotas);
-    }
-
-    private void configuraItemTouchHelper(RecyclerView listaDeNotas) {
-        ItemTouchHelper itemTouchHelper =
-                new ItemTouchHelper(new NotaItemTouchHelperCallback(adapter));
-        itemTouchHelper.attachToRecyclerView(listaDeNotas);
-    }
-
-    private void configuraAdapter(List<Nota> notas, RecyclerView listaDeNotas) {
-        adapter = new ListaNotasAdapter(this, notas);
-        listaDeNotas.setAdapter(adapter);
-        adapter.setOnItemClickListener(new ListaNotasAdapter.OnItemClickListener() {
+        repository.buscaNotas(new NotaRepository.DadosCarregadosCallback<List<Nota>>() {
             @Override
-            public void OnItemClick(Nota nota, int posicao) {
-                vaiParaFormActivityAlteraNota(nota, posicao);
+            public void quandoSucesso(List<Nota> resposta) {
+                adapter.todasAsNotas(resposta);
+            }
+
+            @Override
+            public void quandoErro(String erro) {
+                Toast.makeText(ListaNotasActivity.this,
+                        "Não foi possível carregar os dados", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void vaiParaFormActivityAlteraNota(Nota nota, int posicao) {
+    private void configuraItemTouchHelper(RecyclerView listaDeNotas) {
+        ItemTouchHelper itemTouchHelper =
+                new ItemTouchHelper(new NotaItemTouchHelperCallback(adapter, repository));
+        itemTouchHelper.attachToRecyclerView(listaDeNotas);
+    }
+
+    private void configuraAdapter(RecyclerView listaDeNotas) {
+        adapter = new ListaNotasAdapter(this, this::vaiParaFormActivityAlteraNota);
+        listaDeNotas.setAdapter(adapter);
+    }
+
+    private void vaiParaFormActivityAlteraNota(Nota nota) {
         Intent inicializaFormDeAtualizacao = new Intent(ListaNotasActivity.this,
                 FormularioNotaActivity.class);
         inicializaFormDeAtualizacao.putExtra(CHAVE_NOTA, nota);
-        inicializaFormDeAtualizacao.putExtra(CHAVE_POSICAO, posicao);
         startActivityForResult(inicializaFormDeAtualizacao, CODIGO_REQUISICAO_ALTERA_NOTA);
     }
 }

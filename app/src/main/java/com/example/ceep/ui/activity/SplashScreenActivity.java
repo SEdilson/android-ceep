@@ -16,7 +16,6 @@ import static com.example.ceep.ui.activity.SplashScreenActivityConstantes.TEMPO_
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-
     private SharedPreferences preferences;
 
     @Override
