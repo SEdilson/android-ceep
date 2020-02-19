@@ -49,14 +49,14 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
 
     public void adiciona(Nota nota) {
         notas.add(nota);
+        this.notifyItemRangeInserted(0, this.notas.size());
         notifyDataSetChanged();
     }
 
     public void todasAsNotas(List<Nota> notas) {
-        notifyItemRangeRemoved(0, this.notas.size());
         this.notas.clear();
         this.notas.addAll(notas);
-        this.notifyItemRangeInserted(0, this.notas.size());
+        notifyDataSetChanged();
     }
 
     public void altera(Nota nota) {
@@ -64,13 +64,8 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.Li
         notifyItemChanged(nota.getPosicao());
     }
 
-//    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-//        this.onItemClickListener = onItemClickListener;
-//    }
-
     public void remove(Nota nota) {
         notas.remove(nota.getPosicao());
-        notifyItemRangeRemoved(0, this.notas.size());
         notifyItemRemoved(nota.getId());
     }
 

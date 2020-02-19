@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA_ID;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.ID_INVALIDO;
 
 public class FormularioNotaActivity extends AppCompatActivity {
 
@@ -33,6 +35,7 @@ public class FormularioNotaActivity extends AppCompatActivity {
     private EditText campoDescricao;
     private List<Cores> cores = Arrays.asList(Cores.values());
     private ConstraintLayout formNotaLayout;
+    private int idNota = ID_INVALIDO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class FormularioNotaActivity extends AppCompatActivity {
             setTitle(ALTERA_NOTA_TITULO_APPBAR);
             nota = (Nota) dadosRecebidos.
                     getSerializableExtra(CHAVE_NOTA);
+            idNota = dadosRecebidos.getIntExtra(CHAVE_NOTA_ID, ID_INVALIDO);
             campoTitulo.setText(nota.getTitulo());
             campoDescricao.setText(nota.getDescricao());
             formNotaLayout.setBackgroundColor(nota.getCor());
@@ -104,6 +108,7 @@ public class FormularioNotaActivity extends AppCompatActivity {
     private void resultadoInsercaoNota() {
         Intent resultadoInsercao = new Intent();
         resultadoInsercao.putExtra(CHAVE_NOTA, nota);
+        resultadoInsercao.putExtra(CHAVE_NOTA_ID, idNota);
         setResult(Activity.RESULT_OK, resultadoInsercao);
     }
 

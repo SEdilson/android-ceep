@@ -38,7 +38,9 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     private void trocaPosicaoDasNotas(int posicaoInicial, int posicaoFinal) {
-        adapter.troca(posicaoInicial, posicaoFinal);
+        Nota notaSelecionada = adapter.retornaNotaNaPosicao(posicaoInicial);
+        Nota notaTrocada = adapter.retornaNotaNaPosicao(posicaoFinal);
+        adapter.troca(notaSelecionada.getPosicao(), notaTrocada.getPosicao());
     }
 
     @Override

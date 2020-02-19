@@ -28,6 +28,7 @@ import com.example.ceep.ui.recycler.helper.callback.NotaItemTouchHelperCallback;
 import java.util.List;
 
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA;
+import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CHAVE_NOTA_ID;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CODIGO_REQUISICAO_ALTERA_NOTA;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.CODIGO_REQUISICAO_INSERE_NOTA;
 import static com.example.ceep.ui.activity.ListaNotasActivityConstantes.LAYOUT_APLICADO;
@@ -188,7 +189,7 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private boolean ehResultadoAlteraNota(int requestCode, Intent data) {
         return ehCodigoRequisicaoAlteraNota(requestCode) &&
-                temNota(data);
+                temNotaComId(data);
     }
 
     private boolean ehCodigoRequisicaoAlteraNota(int requestCode) {
@@ -201,6 +202,10 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private boolean temNota(@Nullable Intent data) {
         return data != null && data.hasExtra(CHAVE_NOTA);
+    }
+
+    private boolean temNotaComId(@Nullable Intent data) {
+        return data != null && data.hasExtra(CHAVE_NOTA_ID);
     }
 
     private boolean resultadoOK(int resultCode) {
@@ -259,6 +264,7 @@ public class ListaNotasActivity extends AppCompatActivity {
         Intent inicializaFormDeAtualizacao = new Intent(ListaNotasActivity.this,
                 FormularioNotaActivity.class);
         inicializaFormDeAtualizacao.putExtra(CHAVE_NOTA, nota);
+        inicializaFormDeAtualizacao.putExtra(CHAVE_NOTA_ID, nota);
         startActivityForResult(inicializaFormDeAtualizacao, CODIGO_REQUISICAO_ALTERA_NOTA);
     }
 }
